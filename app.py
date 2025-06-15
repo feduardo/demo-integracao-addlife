@@ -7,7 +7,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import json
-
 # Configuração da página
 st.set_page_config(
     page_title="Demo - Integração RD Station × CIGAM ERP | AddLife Diagnósticos",
@@ -15,6 +14,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+if st.text_input("Senha da Demo:", type="password") != "demo2025":
+    st.error("Acesso restrito")
+    st.stop()
 
 # CSS customizado com cores da AddLife
 st.markdown("""
@@ -202,7 +204,10 @@ fluxo_demo = st.sidebar.selectbox(
         "4. 💰 Situação Financeira → CRM",
         "5. 📦 Consulta Estoque Equipamentos",
         "6. 📈 Histórico Compras Laboratório",
-        "7. 💲 Tabela Preços por Categoria"
+        "7. 💲 Tabela Preços por Categoria",
+        "8. 🔄 Atualização Cadastral ERP → CRM",
+        "9. 📱 Campanha CRM → Análise ERP",
+        "10. 🎯 Segmentação por Comportamento"
     ]
 )
 
@@ -556,6 +561,112 @@ if 'executar_demo' in st.session_state and st.session_state.executar_demo:
             with col_hist3:
                 st.metric("Categoria Preferida", "Hematologia", "🩸 Especialidade")
                 st.metric("Próxima Compra", "Prevista Set/2025", "🎯 Prospecção")
+        
+        elif fluxo_demo.startswith("8."):
+            # Fluxo 8: Atualização Cadastral ERP → CRM
+            status_text.text("Sincronizando atualização cadastral do ERP...")
+            progress_bar.progress(20)
+            
+            adicionar_log_addlife("INFO", "CIGAM", "Endereço de cobrança alterado - Lab Santa Clara")
+            time.sleep(velocidade_demo)
+            
+            status_text.text("🔍 Identificando dados alterados...")
+            progress_bar.progress(45)
+            time.sleep(velocidade_demo)
+            
+            status_text.text("📞 Atualizando cadastro no CRM...")
+            dados_atualizacao = {
+                "endereco_cobranca": "Rua Nova, 456 - Centro, BH/MG",
+                "telefone_financeiro": "(31) 99999-8888",
+                "contato_compras": "Maria Silva"
+            }
+            
+            resultado = simular_api_call_addlife("RD Station CRM", "/contacts/update", "PUT", dados_atualizacao)
+            progress_bar.progress(85)
+            time.sleep(velocidade_demo)
+            
+            progress_bar.progress(100)
+            adicionar_log_addlife("SUCCESS", "RD Station CRM", "Cadastro atualizado - Equipe comercial notificada")
+            st.success("✅ Dados cadastrais sincronizados!")
+            
+            st.info("📋 **Dados Atualizados:** Endereço cobrança • Contato financeiro • Telefone compras")
+            
+        elif fluxo_demo.startswith("9."):
+            # Fluxo 9: Campanha CRM → Análise ERP
+            status_text.text("Enviando resultados de campanha para análise...")
+            progress_bar.progress(25)
+            
+            adicionar_log_addlife("INFO", "RD Station", "Campanha 'Black Friday Equipamentos' finalizada")
+            time.sleep(velocidade_demo)
+            
+            status_text.text("📊 Coletando métricas da campanha...")
+            progress_bar.progress(50)
+            time.sleep(velocidade_demo)
+            
+            status_text.text("💰 Enviando dados para análise contábil...")
+            dados_campanha = {
+                "campanha": "Black Friday Equipamentos 2025",
+                "periodo": "20-30/Nov/2025",
+                "leads_gerados": 47,
+                "vendas_realizadas": 8,
+                "faturamento": 580000,
+                "roi": 4.2,
+                "produtos_destaque": ["Gasometria", "Hematologia"]
+            }
+            
+            resultado = simular_api_call_addlife("CIGAM", "/api/campanhas/resultado", "POST", dados_campanha)
+            progress_bar.progress(100)
+            adicionar_log_addlife("SUCCESS", "CIGAM", "Resultado registrado para análise fiscal e contábil")
+            st.success("✅ Dados de campanha enviados para ERP!")
+            
+            # Métricas da campanha
+            col_camp1, col_camp2, col_camp3 = st.columns(3)
+            with col_camp1:
+                st.metric("Leads Gerados", "47", "📈 +65% vs média")
+                st.metric("Taxa Conversão", "17%", "🎯 Excelente")
+            with col_camp2:
+                st.metric("Faturamento", "R$ 580k", "💰 Meta batida")
+                st.metric("ROI", "4.2x", "🚀 420% retorno")
+            with col_camp3:
+                st.metric("Vendas", "8 equipamentos", "✅ Objetivo")
+                st.metric("Ticket Médio", "R$ 72.500", "💎 Premium")
+                
+        elif fluxo_demo.startswith("10."):
+            # Fluxo 10: Segmentação por Comportamento ERP → CRM
+            status_text.text("Analisando comportamento de compra dos clientes...")
+            progress_bar.progress(30)
+            
+            adicionar_log_addlife("INFO", "CIGAM", "Análise comportamental iniciada - 245 clientes")
+            time.sleep(velocidade_demo)
+            
+            status_text.text("🔍 Identificando padrões de compra...")
+            progress_bar.progress(60)
+            time.sleep(velocidade_demo)
+            
+            status_text.text("🎯 Criando segmentos para marketing...")
+            segmentos = {
+                "clientes_inativos_90_dias": 23,
+                "compradores_frequentes": 31,
+                "clientes_alto_valor": 18,
+                "interessados_gasometria": 15,
+                "labs_expansao": 12
+            }
+            
+            resultado = simular_api_call_addlife("RD Station", "/platform/segments/update", "POST", segmentos)
+            progress_bar.progress(100)
+            adicionar_log_addlife("SUCCESS", "RD Station", "5 segmentos atualizados para campanhas direcionadas")
+            st.success("✅ Segmentação inteligente concluída!")
+            
+            # Visualizar segmentos
+            df_segmentos = pd.DataFrame([
+                {"Segmento": "Clientes Inativos", "Quantidade": 23, "Ação": "Campanha Reativação"},
+                {"Segmento": "Compradores Frequentes", "Quantidade": 31, "Ação": "Programa Fidelidade"},
+                {"Segmento": "Alto Valor", "Quantidade": 18, "Ação": "Oferta Premium"},
+                {"Segmento": "Interessados Gasometria", "Quantidade": 15, "Ação": "Demo Técnica"},
+                {"Segmento": "Labs em Expansão", "Quantidade": 12, "Ação": "Pacote Completo"}
+            ])
+            
+            st.dataframe(df_segmentos, use_container_width=True)
                 
         # Resetar flag
         st.session_state.executar_demo = False
